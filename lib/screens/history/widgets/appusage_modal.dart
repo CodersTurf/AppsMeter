@@ -30,32 +30,34 @@ class _AppUsageModalState extends State<AppUsageScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
+       
       child: Column(children: <Widget>[
-        Container(
-            height: 70,
-            color: Colors.grey[900],
+        Container(  
+          height: 55,        
+            color: Colors.grey[800],
             child: Row(children: <Widget>[              
               SizedBox(width: 10),
               CircleAvatar(
-                radius: 20,
+                radius: 23,
                 backgroundColor: Colors.white10,
                 child: Container(
                     margin: EdgeInsets.all(10),
                     child: Image.memory(
                       widget.app.decodedImage,
                       fit: BoxFit.cover,
-                      height: 30,
-                      width: 30,
+                      height: 40,
+                      width: 40,
                     )),
               ),
               SizedBox(
                 width: 10,
               ),
               Text(capitalizeText(widget.app.appName),
-                  style: TextStyle(color: Colors.pink, fontSize: 20)),
-                  Expanded(child:Align(alignment: Alignment.centerRight,child:Padding(padding: EdgeInsets.all(9),
+                  style: TextStyle(color: Colors.pink, fontSize: 18)),
+                  Expanded(child:Align(alignment: Alignment.centerRight,
+                  child:Padding(padding: EdgeInsets.all(9),
                   child: CircleAvatar(
-                    backgroundColor: Colors.grey[800],
+                    backgroundColor: Colors.grey[700],
                     radius: 13,
                     child:GestureDetector(
                       onTap:(){

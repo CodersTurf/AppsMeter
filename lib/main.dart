@@ -1,5 +1,5 @@
 import 'package:AppsMeter/screens/default_screen.dart';
-import 'package:AppsMeter/screens/home/home_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:in_app_update/in_app_update.dart';
