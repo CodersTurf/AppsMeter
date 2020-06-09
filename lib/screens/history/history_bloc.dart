@@ -73,7 +73,7 @@ class HistoryBloc {
     apps.forEach((element) {
        
         element.totalPercentUSed =
-            getPercentOfHoursUsed(element.usageSeconds, numOfDays: 1);
+            getPercentOfHoursUsed(element.usageSeconds, numOfDays: 7);
       
     });
     totalReqCompleted++;
