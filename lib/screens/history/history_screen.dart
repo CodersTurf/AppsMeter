@@ -38,15 +38,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   showAppUsageModal(AppUsageModel app) {
+    
     showDialog(
         context: context,
-        builder: (BuildContext context) => Dialog(
-            clipBehavior: Clip.hardEdge,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(13.0))),
-            child: Container(
-                height: MediaQuery.of(context).size.height - 250,
-                child: AppUsageScreen(_selectedDateRange, app))));
+        builder: (BuildContext context) => 
+                   AppUsageScreen(_selectedDateRange, app));
   }
 
   getUsageData() {

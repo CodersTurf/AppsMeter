@@ -1,5 +1,5 @@
 import 'package:AppsMeter/screens/default_screen.dart';
-import 'package:AppsMeter/screens/home/home_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -25,14 +25,27 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   int appUsagePerm = 0;
   var storageService = locator<LocalStorageService>();
+  showTestMessage(String message)
+  {
+      scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+      ));
+  }
   Future<void> checkForUpdate() async {
     var isLocalUpdateExist = await storageService.getBoolValue('InAppUpdate');
     if (isLocalUpdateExist == true) {
+      showTestMessage( 'Update exist and performing update');
       performUpdate();
     } else {
-      InAppUpdate.checkForUpdate().then((info) {
+      InAppUpdate.checkForUpdate().then((info) {        
         if (info?.updateAvailable == true) {
-          downloadUpdate();
+           showTestMessage('Update available and downloading');
+           downloadUpdate();
+        }
+        else
+        {
+          showTestMessage('Update not found');
         }
       }).catchError((e) => showError);
     }
@@ -63,13 +76,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   downloadUpdate() {
+     showTestMessage( 'performing flexible update download');
     InAppUpdate.startFlexibleUpdate().then((value) {
+       showTestMessage('flexible update downloaded');
       storageService.saveKeyPairBoolValue('InAppUpdate', true);
       performUpdate();
     }).catchError((e) => showError);
   }
 
   performUpdate() {
+     showTestMessage( 'Completing flexible update');
     InAppUpdate.completeFlexibleUpdate()
         .then((value) =>
             storageService.saveKeyPairBoolValue('InAppUpdate', false))
@@ -98,12 +114,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     checkAppPerm();
     WidgetsBinding.instance.addObserver(this);
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (Config.appMode != 'debug') {
+      if (Config.appMode != 'debug') {         
         checkForUpdate();
       }
     });
   }
-
+  var scaffoldKey=new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -118,7 +134,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         accentIconTheme: IconThemeData(color: Colors.black),
         // primarySwatch: Colors.purple,
       ),
-      home: getScreen(),
+      home: new Scaffold(
+        key:scaffoldKey,
+        body: getScreen()),
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
