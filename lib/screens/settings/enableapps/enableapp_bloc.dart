@@ -54,7 +54,7 @@ class EnableAppBloc {
 
   getAllApps() async {
     disabledApps = await storageService.getValue('disabledApps');
-    var allApps = await installedAppsService.getAllInstalledApps();
+    var allApps = await installedAppsService.getAllApps();
     Map map = Map();
     map['allApps'] = allApps;
     map['disabledApps'] = disabledApps;

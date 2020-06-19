@@ -21,11 +21,14 @@ class LocalStorageService {
     var prefObj = await getPreferences();
     return prefObj.getBool(key);
   }
-  Future<bool> saveKeyPairBoolValue(String key, bool value) async {
+   saveKeyPairBoolValue(String key, bool value) async {
     var prefObj = await getPreferences();
-    return await prefObj.setBool(key, value);
+    await prefObj.setBool(key, value);
   }
-
+  deleteKey(String key) async {
+    var prefObj = await getPreferences();
+     await prefObj.remove(key);    
+  }
   Future<List<String>> getValue(String key) async {
     var prefObj = await getPreferences();
     var vals = prefObj.getStringList(key);

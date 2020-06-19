@@ -67,7 +67,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         await askPermission();
       }
     }
-    setState(() {});
+    setState(() {
+      
+    });
   }
 
   askPermission() async {
@@ -80,22 +82,25 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     InAppUpdate.startFlexibleUpdate().then((value) {
        showTestMessage('flexible update downloaded');
       storageService.saveKeyPairBoolValue('InAppUpdate', true);
-      performUpdate();
+     // performUpdate();
     }).catchError((e) => showError);
   }
 
   performUpdate() {
      showTestMessage( 'Completing flexible update');
     InAppUpdate.completeFlexibleUpdate()
-        .then((value) =>
-            storageService.saveKeyPairBoolValue('InAppUpdate', false))
+        .then((value){
+            storageService.deleteKey('InAppUpdate');
+            showTestMessage( 'Deleted InAppUpdate');
+        })
         .catchError((e) => showError);
   }
 
   showError(ex) {
-    Future.delayed(Duration(seconds: 15), () {
-      locator<NavigationService>().navigateTo('Error', ex.error);
-    });
+   scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(ex.error),
+        duration: Duration(seconds: 3),
+      ));
   }
 
   Widget getScreen() {

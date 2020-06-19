@@ -38,11 +38,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   showAppUsageModal(AppUsageModel app) {
-    
     showDialog(
         context: context,
-        builder: (BuildContext context) => 
-                   AppUsageScreen(_selectedDateRange, app));
+        builder: (BuildContext context) =>
+            AppUsageScreen(_selectedDateRange, app));
   }
 
   getUsageData() {
@@ -64,42 +63,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.show_chart,
-              color: Colors.pink,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text('One Week Usage', style: TextStyle(color: Colors.pink)),
-            // Your widgets here
-          ],
-        ),
-      ),
-      body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints viewportConstraints) {
-        return Container(
-            height: viewportConstraints.maxHeight,
-            padding: EdgeInsets.all(0),
-            child: StreamBuilder(
-                stream: _historyBloc.showLoaderObservable,
-                builder: (context, AsyncSnapshot<bool> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active &&
-                      !snapshot.data) {
-                    return getMainBody();
-                  } else {
-                    return SpinKitDoubleBounce(color: Colors.white);
-                  }
-                }));
-      }),
-    );
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+      return Container(
+          height: viewportConstraints.maxHeight,
+          padding: EdgeInsets.all(0),
+          child: StreamBuilder(
+              stream: _historyBloc.showLoaderObservable,
+              builder: (context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.connectionState == ConnectionState.active &&
+                    !snapshot.data) {
+                  return getMainBody();
+                } else {
+                  return SpinKitDoubleBounce(color: Colors.white);
+                }
+              }));
+    });
   }
 
   getMainBody() {
@@ -115,6 +94,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   builder:
                       (context, AsyncSnapshot<List<AppDataPoint>> snapshot) {
                     if (snapshot.data != null &&
+                        snapshot.data.length > 0 &&
                         snapshot.connectionState == ConnectionState.active) {
                       double totalTime = 0;
                       snapshot.data.forEach((obj) {
@@ -149,7 +129,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     }
                   }))),
       SizedBox(
-        height: 20,
+        height: 5,
       ),
       Container(
           child: new StreamBuilder(

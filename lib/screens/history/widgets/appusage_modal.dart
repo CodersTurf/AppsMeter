@@ -27,7 +27,7 @@ class AppUsageScreen extends StatefulWidget {
 class _AppUsageModalState extends State<AppUsageScreen> {
   //_AppUsageSheetState(this.selectedDateRange, this.app) {
   _AppUsageModalState() {
-    Future.delayed(Duration(milliseconds: 10), () {
+    Future.delayed(Duration(milliseconds: 1), () {
       setState(() {
         dialogueHeight = MediaQuery.of(context).size.height-150;
         dialogueWidth = MediaQuery.of(context).size.width - 30;
@@ -41,21 +41,13 @@ class _AppUsageModalState extends State<AppUsageScreen> {
   DateTime maxUseDay;
   DateTime minDay;
   getMinMaxDay(List<AppDataPoint> data) {
-    int minIndex = 0;
-    int maxIndex = 0;
-    for (var index = 0; index < data.length - 1; index++) {
-      if (data[index].usage < data[index + 1].usage) {
-        minIndex = index;
-        maxIndex = index + 1;
-      } else {
-        minIndex = index + 1;
-        maxIndex = index;
-      }
-    }
-    minDay = data[minIndex].date;
-    maxUseDay = data[maxIndex].date;
-    minUsage = data[minIndex].usage;
-    maxUsage = data[maxIndex].usage;
+    data.sort((obj1,obj2){
+      return obj2.usage.compareTo(obj1.usage);
+    });
+    minDay = data[0].date;
+    maxUseDay = data[data.length-1].date;
+    minUsage = data[0].usage;
+    maxUsage = data[data.length-1].usage;
   }
 
   Widget getMinMaxRow(String label, DateTime dt,double val) {
@@ -65,11 +57,11 @@ class _AppUsageModalState extends State<AppUsageScreen> {
       Row(children: <Widget>[
         Text(
           label,
-          style: TextStyle(fontSize: 17, color: Colors.blue),
+          style: TextStyle(fontSize: 17, color: Colors.pink),
         ),
         Text(
           val.toString()+' minutes',
-          style: TextStyle(fontSize: 14, color: Colors.pink),
+          style: TextStyle(fontSize: 14, color: Colors.white70),
         )
       ]),
       SizedBox(height: 3,),
@@ -89,8 +81,8 @@ class _AppUsageModalState extends State<AppUsageScreen> {
         child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(15)),
             child: AnimatedContainer(
-              curve: Curves.bounceIn,
-                duration: Duration(milliseconds: 140),
+              curve: Curves.easeInOutCirc,
+                duration: Duration(milliseconds: 150),
                 color: Colors.grey[900],
                 width: dialogueWidth,
                 height: dialogueHeight,

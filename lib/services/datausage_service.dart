@@ -22,17 +22,45 @@ class DataUsageService {
     }
   }
 
+  Future<List<AppUsageModel>> getUnUsedApps(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    List<AppUsageModel> apps = new List<AppUsageModel>();
+    try {
+      var usageInfo =
+          await UsageStats.queryAndAggregateUsageStats(startDate, endDate);
+      var keys = usageInfo.keys.toList();
+      for (var index = 0; index < keys.length; index++) {
+        var key = keys[index];
+        var app = usageInfo[key];
+        if (app.totalTimeInForeground == '0') {
+         
+          var packageDetails = await installedAppsService.getAppDetails(
+             key, true);
+          if (packageDetails != null) {
+            var appD = AppUsageModel(packageDetails.appName, 0,
+                packageDetails.decodedImage, packageDetails.appPackage);
+            apps.add(appD);
+          }
+       }
+      }
+    } catch (err) {
+      throw err;
+    }
+    return apps;
+  }
+
   Future<List<AppUsageModel>> getAppUsage(DateTime startDate, DateTime endDate,
       [String appPackage = '']) async {
     try {
-    
       //just to show permission for app_usage
       //else it wont work..
       //var ak = await appUsage.fetchUsage(DateTime.now(), DateTime.now());
       List<AppUsageModel> appModels = new List<AppUsageModel>();
       // return appModels;
       var events = await UsageStats.queryEvents(startDate, endDate);
-     
+
       var eventStats = events;
       if (appPackage.length > 0) {
         eventStats = events.where((obj) {
@@ -45,13 +73,6 @@ class DataUsageService {
           })
           .toSet()
           .toList();
-      var eventsD = eventStats
-          .map((obj) {
-            return obj.eventType;
-          })
-          .toSet()
-          .toList();
-
       Map<String, List<List<int>>> appIntervals =
           new Map<String, List<List<int>>>();
       apps.forEach((app) {

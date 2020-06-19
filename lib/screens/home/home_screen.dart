@@ -1,3 +1,4 @@
+import 'package:AppsMeter/screens/home/widgets/tapbar.dart';
 import 'package:AppsMeter/services/navigation_service.dart';
 import 'package:AppsMeter/utilities/servicelocator.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:AppsMeter/screens/home/widgets/daily_summary.dart';
 import 'package:AppsMeter/widgets/apppie_chart_legend.dart';
 
 import 'package:AppsMeter/widgets/apps_piechart.dart';
-import 'package:AppsMeter/widgets/bottombar.dart';
+ 
 import 'home_bloc.dart';
 import 'package:AppsMeter/utilities/constants.dart';
 import 'package:AppsMeter/utilities/helper.dart';
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _HomeScreenState() {
     getData(_selectedDay);
   }
+
   getData(String selectedDay) async {
     await appBloc.getUsedAppsForDay(selectedDay);
 
@@ -34,60 +36,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _selectedDay = '0';
-  getTabs() {
-    return List<Tab>.generate(dailyHeaders.length, (index) {
-      return Tab(
-          child: Text(dailyHeaders[index], style: TextStyle(fontSize: 18)));
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: dailyHeaders.length,
-        child: Scaffold(
-          appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.home,
-                    color: Colors.pink,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text('Daily Usage', style: TextStyle(color: Colors.pink)),
-                  // Your widgets here
-                ],
-              ),
-              bottom: TabBar(
-                unselectedLabelColor: Colors.white38,
-                isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: BoxDecoration(
-                    border: Border.all(width: 0, color: Colors.transparent)),
-                tabs: getTabs(),
-                onTap: (index) {
-                  getData(index.toString());
-                },
-              )),
-          body: StreamBuilder(
-              stream: homeBloc.showLoaderObservable,
-              builder: (context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.connectionState == ConnectionState.active &&
-                    !snapshot.data) {
-                  return LayoutBuilder(builder: (BuildContext context,
-                      BoxConstraints viewportConstraints) {
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+      return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Container(height:50, child: HomeTabBar(getData)),
+        Container(
+            
+            child: StreamBuilder(
+                stream: homeBloc.showLoaderObservable,
+                builder: (context, AsyncSnapshot<bool> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active &&
+                      !snapshot.data) {
                     return Column(children: <Widget>[
-                      SizedBox(
-                        height: 15,
-                      ),
                       Container(
+                       height: viewportConstraints.maxHeight - 50,
                           color: Colors.grey[800],
-                          height: viewportConstraints.maxHeight - 15,
                           child: SingleChildScrollView(
                               child: Center(
                                   child: Column(children: <Widget>[
@@ -127,12 +92,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }),
                           ]))))
                     ]);
-                  });
-                } else {
-                  return SpinKitDoubleBounce(color: Colors.white);
-                }
-              }),
-        ));
+                  } else {
+                    return SpinKitDoubleBounce(color: Colors.white);
+                  }
+                }))
+      ]);
+    });
   }
 
   dispose() {
