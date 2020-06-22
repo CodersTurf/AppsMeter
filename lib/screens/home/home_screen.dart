@@ -10,7 +10,7 @@ import 'package:AppsMeter/screens/home/widgets/daily_summary.dart';
 import 'package:AppsMeter/widgets/apppie_chart_legend.dart';
 
 import 'package:AppsMeter/widgets/apps_piechart.dart';
- 
+
 import 'home_bloc.dart';
 import 'package:AppsMeter/utilities/constants.dart';
 import 'package:AppsMeter/utilities/helper.dart';
@@ -41,9 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
       return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        Container(height:50, child: HomeTabBar(getData)),
+        Container(height: 50, child: HomeTabBar(getData)),
         Container(
-            
             child: StreamBuilder(
                 stream: homeBloc.showLoaderObservable,
                 builder: (context, AsyncSnapshot<bool> snapshot) {
@@ -51,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       !snapshot.data) {
                     return Column(children: <Widget>[
                       Container(
-                       height: viewportConstraints.maxHeight - 50,
+                          height: viewportConstraints.maxHeight - 50,
                           color: Colors.grey[800],
                           child: SingleChildScrollView(
                               child: Center(
@@ -138,8 +137,20 @@ class TopApps extends StatelessWidget {
                               bottom: BorderSide(
                                   width: 0.5, color: Colors.grey[700]))),
                       padding: EdgeInsets.all(15),
-                      child: Text('Top Used Apps',
-                          style: TextStyle(color: Colors.blue, fontSize: 17))),
+                      child: Row(children: <Widget>[
+                        Text('Top Used Apps',
+                            style: TextStyle(color: Colors.blue, fontSize: 17)),
+                            SizedBox(width: 10,),
+                        Tooltip(
+                          preferBelow: false,
+                          message: 'Usage time > 4mins',
+                          child: Icon(                            
+                            Icons.info_outline,
+                            color:Colors.orange,
+                            size: 23,
+                          ),
+                        )
+                      ])),
                   Padding(padding: EdgeInsets.all(10)),
                   Container(
                       padding: EdgeInsets.all(10),

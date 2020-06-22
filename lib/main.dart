@@ -1,3 +1,5 @@
+import 'package:AppsMeter/local_notification.dart';
+import 'package:AppsMeter/remote_push_notification.dart';
 import 'package:AppsMeter/screens/default_screen.dart';
 
 import 'package:flutter/material.dart';
@@ -53,6 +55,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+       LocalNotificationManager().cancelAllNotifications();
       checkAppPerm();
     }
   }
@@ -116,9 +119,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    PushNotificationsManager pushManager=new PushNotificationsManager();
+    LocalNotificationManager localManager=new LocalNotificationManager();
+    localManager.createNotificationChannel();
+    pushManager.init();
     checkAppPerm();
     WidgetsBinding.instance.addObserver(this);
     SchedulerBinding.instance.addPostFrameCallback((_) {
+      localManager.cancelAllNotifications();
       if (Config.appMode != 'debug') {         
         checkForUpdate();
       }

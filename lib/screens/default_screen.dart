@@ -1,5 +1,6 @@
 import 'package:AppsMeter/screens/history/history_screen.dart';
 import 'package:AppsMeter/screens/notifications/notifications_screen.dart';
+import 'package:AppsMeter/screens/reports/report_screen.dart';
 import 'package:AppsMeter/screens/unused_apps/unused_apps_screen.dart';
 import 'package:AppsMeter/services/navigation_service.dart';
 import 'package:AppsMeter/utilities/servicelocator.dart';
@@ -44,7 +45,7 @@ class _ScreenState extends State<DefaultScreen>
         return "Daily Usage";
         break;
       case 1:
-        return "Past Week Usage";
+        return "One Week Usage";
         break;
       case 2:
         return "Notification";
@@ -164,10 +165,10 @@ class _ScreenState extends State<DefaultScreen>
                     changeScreen(2);
                   },
                   leading: Icon(
-                    Icons.grade,
+                    Icons.show_chart,
                     color: Colors.white,
                   ),
-                  title: Text('Progress Report',
+                  title: Text('Weekly Report',
                       style: TextStyle(color: Colors.white)),
                 ),
               ],
@@ -234,6 +235,8 @@ class _ScreenState extends State<DefaultScreen>
                             })))));
       case 1:
         return SafeArea(child: UnusedAppsScreen(changeScreen));
+      case 2:
+        return SafeArea(child: ReportScreen(changeScreen));  
     }
   }
 

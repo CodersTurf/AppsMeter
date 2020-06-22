@@ -22,7 +22,7 @@ class AppUsageBloc {
     List<AppUsageModel> apps = new List<AppUsageModel>();
     var allApps = await usageDataRepo.getAppUsage(dateRange[0], dateRange[1]);
     allApps.forEach((obj) {
-      if (obj.usageSeconds > 120 &&apps.length<numberOfDisplayApps) {
+      if (obj.usageSeconds > 240 &&apps.length<numberOfDisplayApps) {
         apps.add(obj);
       }
     });

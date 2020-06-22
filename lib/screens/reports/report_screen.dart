@@ -8,18 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class UnusedAppsScreen extends StatefulWidget {
+class ReportScreen extends StatefulWidget {
   Function onBack;
-  UnusedAppsScreen(this.onBack);
+  ReportScreen(this.onBack);
   @override
-  _UnusedAppsScreenState createState() => _UnusedAppsScreenState();
+  _ReportScreenScreenState createState() => _ReportScreenScreenState();
 }
 
-class _UnusedAppsScreenState extends State<UnusedAppsScreen>
+class _ReportScreenScreenState extends State<ReportScreen>
     with TickerProviderStateMixin {
   double appBArHeight = 180;
   AnimationController _controller;
-  List<AppUsageModel> unUsedApps;
+  List<AppUsageModel> unUsedApps=new List<AppUsageModel>();
   bool isReverse = false;
   bool _visible = true;
   UnUsedAppBloc _bloc = new UnUsedAppBloc();
@@ -44,15 +44,7 @@ class _UnusedAppsScreenState extends State<UnusedAppsScreen>
       });
     });
     _controller.reverse();
-  }
-
-  _UnusedAppsScreenState() {
-    getUnUsedApps();
-  }
-  getUnUsedApps() async {
-    unUsedApps = await _bloc.getUnUsedApps();
-    setState(() {});
-  }
+  } 
 
   Future<bool> _willPopCallback() async {
     closeScreen(); // return true if the route to be popped
@@ -75,7 +67,9 @@ class _UnusedAppsScreenState extends State<UnusedAppsScreen>
             child: SlideTransition(
                 position: _offsetFloat,
                 child: Scaffold(
-                    body:LayoutBuilder(builder: (BuildContext context,
+                    body: unUsedApps == null
+                        ? SpinKitDoubleBounce(color: Colors.white)
+                        : LayoutBuilder(builder: (BuildContext context,
                             BoxConstraints viewportConstraints) {
                             return Stack(children: <Widget>[
                               Container(
@@ -115,9 +109,9 @@ class _UnusedAppsScreenState extends State<UnusedAppsScreen>
                                                       child: Padding(
                                                           padding: EdgeInsets
                                                               .fromLTRB(
-                                                                  0, 0, 30, 0),
+                                                                  0, 0, 40, 0),
                                                           child: Text(
-                                                              "Apps not used since 7+ days",
+                                                              "Weekly Report",
                                                               style: TextStyle(
                                                                 fontSize: 19,
                                                                 color: Colors
@@ -128,44 +122,13 @@ class _UnusedAppsScreenState extends State<UnusedAppsScreen>
                               Positioned(
                                   top: 180,
                                   width: MediaQuery.of(context).size.width,
-                                  child:unUsedApps==null? SpinKitDoubleBounce(color: Colors.white):
-                                   unUsedApps.length > 0
-                                      ? Center(
-                                          child: Container(
-                                              height: viewportConstraints
-                                                      .maxHeight -
-                                                  180,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.95,
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 6, 0, 0),
-                                              // color: Colors.grey[800],
-                                              child: Card(
-                                                  color: Colors.grey[800]
-                                                      .withOpacity(0.9),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                  ),
-                                                  elevation: 4,
-                                                  child: getUnusedAppList())),
-                                        )
-                                      : Column(children: <Widget>[
+                                  child: Column(children: <Widget>[
                                           SizedBox(height: 10),
                                           Text(
-                                            "No unused apps in your device.",
+                                            "No data available.",
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 color: Colors.white54),
-                                          ),
-                                          SizedBox(height: 15),
-                                          Icon(
-                                            Icons.thumb_up,
-                                            size: 45,
-                                            color: Colors.orange[700],
                                           )
                                         ]))
                             ]);
@@ -206,32 +169,3 @@ class _UnusedAppsScreenState extends State<UnusedAppsScreen>
     _bloc.dispose();
   }
 }
-
-//    child: Card(
-//     // color:Colors.black12,
-//      elevation: 1,
-//   child:Padding(padding:EdgeInsets.all(10),child: Column(
-//     mainAxisSize: MainAxisSize.min,
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: <Widget>[
-//       Row(
-//         //mainAxisSize: MainAxisSize.max,
-//         mainAxisAlignment: MainAxisAlignment.end,
-//         children: <Widget>[
-//         Expanded(flex: 1,child:SizedBox(height:40,width: 30,
-//          child:  AppIcon(unUsedApps[index].decodedImage))),
-//         SizedBox(width:10),
-//         Expanded(flex: 4,child:  Text(capitalizeText(unUsedApps[index].appName),
-//         style: TextStyle(color: Colors.white,fontSize: 16))),
-
-//          Expanded(flex:4, child:
-//          Align(alignment: Alignment.centerRight,child: GestureDetector(onTap: (){_bloc.unInstallApp(unUsedApps[index].appPackage); },
-//          child: Text('Uninstall',style: TextStyle(color: Colors.blue[500])))
-//           ))
-//       ]),
-//      SizedBox(height: 6,),
-
-//     Text('Not used since past 7+ days.',style: TextStyle(color: Colors.white60,fontSize: 14))
-//   ]),
-// ))
-//  );
