@@ -17,8 +17,8 @@ class TopUsedApps extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
         constraints: BoxConstraints(minHeight: 100),
-        child: Card(
-            color: Colors.grey[900],
+        child: Container(
+            //color: Colors.grey[900],
             // child: Padding(
             //padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Center(child: Column(children: getAppUsage(apps)))));
@@ -26,17 +26,7 @@ class TopUsedApps extends StatelessWidget {
 
   getAppUsage(List<AppUsageModel> apps) {
     List<Widget> widgets = new List<Widget>();
-    widgets.add(Container(
-        height: 50,
-        decoration: BoxDecoration(
-            border: Border(
-                bottom: BorderSide(width: 1.0, color: Colors.grey[700]))),
-        child: ListTile(
-          title: Text(
-            'Top Used Apps',
-            style: TextStyle(color: Colors.blue),
-          ),
-        )));
+ 
     for (var index = 0; index < apps.length; index++) {
       widgets.add(GestureDetector(
           onTap: () {

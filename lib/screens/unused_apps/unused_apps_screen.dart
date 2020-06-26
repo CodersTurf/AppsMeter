@@ -74,102 +74,67 @@ class _UnusedAppsScreenState extends State<UnusedAppsScreen>
             duration: Duration(milliseconds: 130),
             child: SlideTransition(
                 position: _offsetFloat,
-                child: Scaffold(
-                    body:LayoutBuilder(builder: (BuildContext context,
-                            BoxConstraints viewportConstraints) {
-                            return Stack(children: <Widget>[
-                              Container(
-                                  color: Colors.grey[800],
-                                  height: viewportConstraints.maxHeight,
-                                  width: viewportConstraints.maxWidth),
-                              Positioned(
-                                  child: ClipPath(
-                                      clipper: CurvedBottomClipper(),
-                                      child: Container(
-                                          decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                            colors: [
-                                              Colors.grey[900],
-                                              Colors.pink[800]
-                                            ],
-                                          )),
-                                          height: appBArHeight,
-                                          child: Center(
-                                              child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      bottom: 90),
-                                                  child: Row(children: <Widget>[
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          closeScreen();
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.arrow_back,
-                                                          size: 30,
-                                                        )),
-                                                    Expanded(
-                                                        child: Center(
-                                                      child: Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(
-                                                                  0, 0, 30, 0),
-                                                          child: Text(
-                                                              "Apps not used since 7+ days",
-                                                              style: TextStyle(
-                                                                fontSize: 19,
-                                                                color: Colors
-                                                                    .white,
-                                                              ))),
-                                                    ))
-                                                  ])))))),
-                              Positioned(
-                                  top: 180,
-                                  width: MediaQuery.of(context).size.width,
-                                  child:unUsedApps==null? SpinKitDoubleBounce(color: Colors.white):
-                                   unUsedApps.length > 0
-                                      ? Center(
-                                          child: Container(
-                                              height: viewportConstraints
-                                                      .maxHeight -
-                                                  180,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.95,
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 6, 0, 0),
-                                              // color: Colors.grey[800],
-                                              child: Card(
-                                                  color: Colors.grey[800]
-                                                      .withOpacity(0.9),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15.0),
-                                                  ),
-                                                  elevation: 4,
-                                                  child: getUnusedAppList())),
-                                        )
-                                      : Column(children: <Widget>[
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "No unused apps in your device.",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white54),
-                                          ),
-                                          SizedBox(height: 15),
-                                          Icon(
-                                            Icons.thumb_up,
-                                            size: 45,
-                                            color: Colors.orange[700],
-                                          )
-                                        ]))
-                            ]);
-                          })))));
+                child: Scaffold(body: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints viewportConstraints) {
+                  return Stack(children: <Widget>[
+                    Container(
+                        color: Colors.grey[800],
+                        height: viewportConstraints.maxHeight,
+                        width: viewportConstraints.maxWidth),
+                    Positioned(
+                        child: CustomHeader(
+                            appBArHeight,
+                            "Apps not used since 7+ days",
+                            IconButton(
+                                onPressed: () {
+                                  closeScreen();
+                                },
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  size: 30,
+                                )))),
+                    Positioned(
+                        top: 180,
+                        width: MediaQuery.of(context).size.width,
+                        child: unUsedApps == null
+                            ? SpinKitDoubleBounce(color: Colors.white)
+                            : unUsedApps.length > 0
+                                ? Center(
+                                    child: Container(
+                                        height:
+                                            viewportConstraints.maxHeight - 180,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.95,
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 6, 0, 0),
+                                        // color: Colors.grey[800],
+                                        child: Card(
+                                            color: Colors.grey[800]
+                                                .withOpacity(0.9),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            elevation: 4,
+                                            child: getUnusedAppList())),
+                                  )
+                                : Column(children: <Widget>[
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "No unused apps in your device.",
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white54),
+                                    ),
+                                    SizedBox(height: 15),
+                                    Icon(
+                                      Icons.thumb_up,
+                                      size: 45,
+                                      color: Colors.orange[700],
+                                    )
+                                  ]))
+                  ]);
+                })))));
   }
 
   getUnusedAppList() {

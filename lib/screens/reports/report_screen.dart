@@ -19,7 +19,7 @@ class _ReportScreenScreenState extends State<ReportScreen>
     with TickerProviderStateMixin {
   double appBArHeight = 180;
   AnimationController _controller;
-  List<AppUsageModel> unUsedApps=new List<AppUsageModel>();
+  List<AppUsageModel> unUsedApps = new List<AppUsageModel>();
   bool isReverse = false;
   bool _visible = true;
   UnUsedAppBloc _bloc = new UnUsedAppBloc();
@@ -44,7 +44,7 @@ class _ReportScreenScreenState extends State<ReportScreen>
       });
     });
     _controller.reverse();
-  } 
+  }
 
   Future<bool> _willPopCallback() async {
     closeScreen(); // return true if the route to be popped
@@ -77,60 +77,28 @@ class _ReportScreenScreenState extends State<ReportScreen>
                                   height: viewportConstraints.maxHeight,
                                   width: viewportConstraints.maxWidth),
                               Positioned(
-                                  child: ClipPath(
-                                      clipper: CurvedBottomClipper(),
-                                      child: Container(
-                                          decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                            colors: [
-                                              Colors.grey[900],
-                                              Colors.pink[800]
-                                            ],
-                                          )),
-                                          height: appBArHeight,
-                                          child: Center(
-                                              child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      bottom: 90),
-                                                  child: Row(children: <Widget>[
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          closeScreen();
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.arrow_back,
-                                                          size: 30,
-                                                        )),
-                                                    Expanded(
-                                                        child: Center(
-                                                      child: Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(
-                                                                  0, 0, 40, 0),
-                                                          child: Text(
-                                                              "Weekly Report",
-                                                              style: TextStyle(
-                                                                fontSize: 19,
-                                                                color: Colors
-                                                                    .white,
-                                                              ))),
-                                                    ))
-                                                  ])))))),
+                                  child: CustomHeader(
+                                      appBArHeight,
+                                      "Weekly Report",
+                                      IconButton(
+                                          onPressed: () {
+                                            closeScreen();
+                                          },
+                                          icon: Icon(
+                                            Icons.arrow_back,
+                                            size: 30,
+                                          )))),
                               Positioned(
-                                  top: 180,
+                                  top: appBArHeight,
                                   width: MediaQuery.of(context).size.width,
                                   child: Column(children: <Widget>[
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "No data available.",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white54),
-                                          )
-                                        ]))
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "No data available.",
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white54),
+                                    )
+                                  ]))
                             ]);
                           })))));
   }

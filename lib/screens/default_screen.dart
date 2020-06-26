@@ -4,6 +4,7 @@ import 'package:AppsMeter/screens/reports/report_screen.dart';
 import 'package:AppsMeter/screens/unused_apps/unused_apps_screen.dart';
 import 'package:AppsMeter/services/navigation_service.dart';
 import 'package:AppsMeter/utilities/servicelocator.dart';
+
 import 'package:circle_bottom_navigation/circle_bottom_navigation.dart';
 import 'package:circle_bottom_navigation/widgets/tab_data.dart';
 import 'package:flutter/material.dart';
@@ -20,23 +21,47 @@ class DefaultScreen extends StatefulWidget {
 class _ScreenState extends State<DefaultScreen>
     with SingleTickerProviderStateMixin {
   int selectedPageScreen = 0;
+  double appBArHeight = 180;
   final double maxSlide = 300.0;
   bool _canBeDragged = true;
   AnimationController animationController;
   final NavigationService navService = locator<NavigationService>();
   int selectedNavIndex = 0;
+  Widget child;
   getScreen() {
     switch (selectedNavIndex) {
       case 0:
-        return HomeScreen();
+        child = HomeScreen(IconButton(
+            onPressed: () {
+              toggle();
+            },
+            icon: Icon(
+              Icons.menu,
+              size: 30,
+            )));
         break;
       case 1:
-        return HistoryScreen();
+        child = HistoryScreen(IconButton(
+            onPressed: () {
+              toggle();
+            },
+            icon: Icon(
+              Icons.menu,
+              size: 30,
+            )));
         break;
       case 2:
-        return NotificationScreen();
+        child = NotificationScreen(IconButton(
+            onPressed: () {
+              toggle();
+            },
+            icon: Icon(
+              Icons.menu,
+              size: 30,
+            )));
         break;
     }
+    return child;
   }
 
   getTitle() {
@@ -69,7 +94,7 @@ class _ScreenState extends State<DefaultScreen>
         width: 86,
         height: 56,
         top: 90,
-        left: 300+(2600*(1-animationController.value)),
+        left: 300 + (2600 * (1 - animationController.value)),
         child: Material(
           color: Colors.transparent,
           child: GestureDetector(
@@ -79,7 +104,7 @@ class _ScreenState extends State<DefaultScreen>
               child: Container(
                 child: Center(
                     child: Container(
-                      margin: EdgeInsets.fromLTRB(20, 0,0,0),
+                        margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                         decoration: BoxDecoration(
                             color: Colors.black87.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(35)),
@@ -201,14 +226,6 @@ class _ScreenState extends State<DefaultScreen>
                 behavior: HitTestBehavior.translucent,
                 child: SafeArea(
                     child: Scaffold(
-                        appBar: AppBar(
-                            elevation: 0,
-                            leading: GestureDetector(
-                                child: Icon(Icons.menu), onTap: toggle),
-                            title: Text(
-                              getTitle(),
-                              style: TextStyle(color: Colors.pink),
-                            )),
                         body: getScreen(),
                         bottomNavigationBar: CircleBottomNavigation(
                             key: GlobalKey(),
@@ -236,7 +253,7 @@ class _ScreenState extends State<DefaultScreen>
       case 1:
         return SafeArea(child: UnusedAppsScreen(changeScreen));
       case 2:
-        return SafeArea(child: ReportScreen(changeScreen));  
+        return SafeArea(child: ReportScreen(changeScreen));
     }
   }
 

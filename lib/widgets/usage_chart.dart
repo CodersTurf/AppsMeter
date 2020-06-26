@@ -41,7 +41,7 @@ class UsageChart extends StatelessWidget {
         selectedDate: toDate,
         series: [
           BezierLine(
-            lineColor: Colors.blue,
+            lineColor: Colors.blue[500],
             label: label,
             onMissingValue: (dateTime) {
               return 0;

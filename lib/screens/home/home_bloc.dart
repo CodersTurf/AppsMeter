@@ -1,25 +1,14 @@
 import 'package:AppsMeter/datalayer/models/appusage_model.dart';
+import 'package:AppsMeter/services/datausage_service.dart';
 import 'package:AppsMeter/services/installed_apps.dart';
+import 'package:AppsMeter/utilities/constants.dart';
+import 'package:AppsMeter/utilities/helper.dart';
 import 'package:AppsMeter/utilities/servicelocator.dart';
-import 'package:rxdart/rxdart.dart';
 
 class HomeBloc {
-
-  BehaviorSubject<String> _headerMenuChanged = new BehaviorSubject<String>();
-  BehaviorSubject<bool> _loader =BehaviorSubject.seeded(true);
- final InstalledAppsService installedAppsService =
+  final DataUsageService usageDataRepo = locator<DataUsageService>();
+  final InstalledAppsService installedAppsService =
       locator<InstalledAppsService>();
-   
-  Observable<String> get headerMenuObservable => _headerMenuChanged.stream;
-  Observable<bool> get showLoaderObservable => _loader.stream;
-  changeHeaderMenu(String index) {
-    _headerMenuChanged.add(index);
-  }
- 
-  stopLoader() {
-    _loader.add(false);
-    
-  }
 
   Future<void> format(String val1, double val) async {}
 
@@ -31,8 +20,22 @@ class HomeBloc {
     return appUsage;
   }
 
-  dispose() {
-    _headerMenuChanged.close();
-    _loader.close();
+  getUsedAppsForDay(String historyDays) async {
+    double totalUsage=0;
+    List<dynamic> dateRange = getTodaysDateRange(int.parse(historyDays));
+    List<AppUsageModel> apps = new List<AppUsageModel>();
+    var allApps = await usageDataRepo.getAppUsage(dateRange[0], dateRange[1]);
+    allApps.forEach((obj) {
+      totalUsage+=obj.usageSeconds;
+      if (obj.usageSeconds > 240 && apps.length < numberOfDisplayApps) {
+        apps.add(obj);
+      }
+    });
+    apps.sort((app1, app2) {
+      return app2.usageSeconds.compareTo(app1.usageSeconds);
+    });
+    return [apps,totalUsage];
   }
+
+  dispose() {}
 }
