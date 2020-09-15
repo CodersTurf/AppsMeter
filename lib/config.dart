@@ -1,4 +1,3 @@
-class Config{
-static String appMode='production';
-
+class Config {
+  static String appMode = 'debug';
 }

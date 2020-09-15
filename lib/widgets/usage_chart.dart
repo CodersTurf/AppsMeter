@@ -11,7 +11,7 @@ class UsageChart extends StatelessWidget {
   final toDate = DateTime.now();
   final List<AppDataPoint> usageData;
   List<DataPoint<DateTime>> dataPoints;
-  UsageChart(this.usageData, String range,this.label) {
+  UsageChart(this.usageData, this.label) {
     scale = BezierChartScale.WEEKLY;
 
     dataPoints = List<DataPoint<DateTime>>.generate(usageData.length, (index) {
@@ -28,11 +28,10 @@ class UsageChart extends StatelessWidget {
         //   return newFormat.format(value);
         // },
         // bubbleLabelDateTimeBuilder:
-        //     (DateTime value, BezierChartScale scaleType) {          
-        //   return "test";
+        //     (DateTime value, BezierChartScale scaleType) {
+        //   return "22";
         // },
-        // bubbleLabelValueBuilder: (data)
-        // {
+        // bubbleLabelValueBuilder: (data) {
         //   return 'test123';
         // },
         fromDate: fromDate,
@@ -41,7 +40,7 @@ class UsageChart extends StatelessWidget {
         selectedDate: toDate,
         series: [
           BezierLine(
-            lineColor: Colors.blue[500],
+            lineColor: Colors.white,
             label: label,
             onMissingValue: (dateTime) {
               return 0;
@@ -51,15 +50,15 @@ class UsageChart extends StatelessWidget {
         ],
         config: BezierChartConfig(
           verticalIndicatorStrokeWidth: 3.0,
-          verticalIndicatorColor: Colors.blue,
+          verticalIndicatorColor: Colors.white,
           showVerticalIndicator: true,
           showDataPoints: true,
           // displayYAxis: true,
-          // stepsYAxis: 1,
+          stepsYAxis: 1,
           verticalIndicatorFixedPosition: false,
           // backgroundColor: Colors.red,
-          footerHeight: 35.0,
-        //  backgroundColor: Colors.grey[900],
+          // footerHeight: 40.0,
+          //backgroundColor: Colors.grey[900],
           // footerHeight: 30.0,
         ));
   }

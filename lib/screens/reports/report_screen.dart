@@ -78,7 +78,6 @@ class _ReportScreenScreenState extends State<ReportScreen>
                                   width: viewportConstraints.maxWidth),
                               Positioned(
                                   child: CustomHeader(
-                                      appBArHeight,
                                       "Weekly Report",
                                       IconButton(
                                           onPressed: () {

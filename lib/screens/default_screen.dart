@@ -1,15 +1,11 @@
-import 'package:AppsMeter/screens/history/history_screen.dart';
 import 'package:AppsMeter/screens/notifications/notifications_screen.dart';
-import 'package:AppsMeter/screens/reports/report_screen.dart';
 import 'package:AppsMeter/screens/unused_apps/unused_apps_screen.dart';
 import 'package:AppsMeter/services/navigation_service.dart';
 import 'package:AppsMeter/utilities/servicelocator.dart';
+import 'package:AppsMeter/widgets/drawer_menu.dart';
 
-import 'package:circle_bottom_navigation/circle_bottom_navigation.dart';
-import 'package:circle_bottom_navigation/widgets/tab_data.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:AppsMeter/utilities/constants.dart';
 
 import 'home/home_screen.dart';
 
@@ -28,29 +24,30 @@ class _ScreenState extends State<DefaultScreen>
   final NavigationService navService = locator<NavigationService>();
   int selectedNavIndex = 0;
   Widget child;
+  getMenuIcon() {
+    return IconButton(
+        onPressed: () {
+          toggle();
+        },
+        icon: Icon(
+          Icons.menu,
+          color: Colors.white70,
+          size: 30,
+        ));
+  }
+
   getScreen() {
-    switch (selectedNavIndex) {
+    switch (selectedPageScreen) {
       case 0:
-        child = HomeScreen(IconButton(
-            onPressed: () {
-              toggle();
-            },
-            icon: Icon(
-              Icons.menu,
-              size: 30,
-            )));
+        child = HomeScreen(getMenuIcon());
         break;
+
       case 1:
-        child = HistoryScreen(IconButton(
-            onPressed: () {
-              toggle();
-            },
-            icon: Icon(
-              Icons.menu,
-              size: 30,
-            )));
-        break;
+        return SafeArea(
+            child: UnusedAppsScreen(changeScreen, getMenuIcon(), UniqueKey()));
       case 2:
+        return SafeArea(child: NotificationScreen(getMenuIcon()));
+      case 4:
         child = NotificationScreen(IconButton(
             onPressed: () {
               toggle();
@@ -64,20 +61,6 @@ class _ScreenState extends State<DefaultScreen>
     return child;
   }
 
-  getTitle() {
-    switch (selectedNavIndex) {
-      case 0:
-        return "Daily Usage";
-        break;
-      case 1:
-        return "One Week Usage";
-        break;
-      case 2:
-        return "Notification";
-        break;
-    }
-  }
-
   Future<bool> _willPopCallback() async {
     if (selectedNavIndex == 0) {
       return true;
@@ -88,12 +71,12 @@ class _ScreenState extends State<DefaultScreen>
     return false; // return true if the route to be popped
   }
 
-  getStackedWidget() {
+  getStackedWidget(child) {
     return Stack(children: <Widget>[
       Positioned(
         width: 86,
         height: 56,
-        top: 90,
+        top: 85,
         left: 300 + (2600 * (1 - animationController.value)),
         child: Material(
           color: Colors.transparent,
@@ -104,9 +87,9 @@ class _ScreenState extends State<DefaultScreen>
               child: Container(
                 child: Center(
                     child: Container(
-                        margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        margin: EdgeInsets.fromLTRB(14, 0, 0, 0),
                         decoration: BoxDecoration(
-                            color: Colors.black87.withOpacity(0.3),
+                            color: Colors.grey[500].withOpacity(0.4),
                             borderRadius: BorderRadius.circular(35)),
                         height: 35,
                         width: 35,
@@ -116,10 +99,10 @@ class _ScreenState extends State<DefaultScreen>
                           size: 21,
                         ))),
                 decoration: BoxDecoration(
-                    color: Colors.grey[800],
                     gradient: LinearGradient(
-                      colors: [Colors.grey[900], Colors.pink[800]],
-                    ),
+                        colors: [Colors.cyan[200], Colors.cyan[300]],
+                        begin: Alignment.bottomRight,
+                        end: Alignment.topLeft),
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(25),
                         bottomRight: Radius.circular(25))),
@@ -141,7 +124,7 @@ class _ScreenState extends State<DefaultScreen>
             ..setEntry(3, 2, 0.001)
             ..rotateY(-pi * animationController.value / 2),
           alignment: Alignment.centerLeft,
-          child: getDefaultScreen(),
+          child: child,
         ),
       ),
     ]);
@@ -153,53 +136,7 @@ class _ScreenState extends State<DefaultScreen>
         onHorizontalDragUpdate: _onDragUpdate,
         onHorizontalDragEnd: _onDragEnd,
         behavior: HitTestBehavior.translucent,
-        child: SafeArea(
-          child: Container(
-            color: Colors.grey[800],
-            width: 300,
-            height: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                    height: 60,
-                    width: 300,
-                    color: Colors.grey[900],
-                    child: ListTile(
-                      leading: Image.asset(
-                        "assets/images/app_icon.png",
-                        height: 46,
-                      ),
-                      title: Text('AppsMeter',
-                          style: TextStyle(color: Colors.pink, fontSize: 19)),
-                    )),
-                ListTile(
-                  onTap: () {
-                    changeScreen(1);
-                  },
-                  leading: Icon(
-                    Icons.report,
-                    color: Colors.white,
-                  ),
-                  title: Text('Unused Apps',
-                      style: TextStyle(color: Colors.white)),
-                ),
-                ListTile(
-                  onTap: () {
-                    changeScreen(2);
-                  },
-                  leading: Icon(
-                    Icons.show_chart,
-                    color: Colors.white,
-                  ),
-                  title: Text('Weekly Report',
-                      style: TextStyle(color: Colors.white)),
-                ),
-              ],
-            ),
-          ),
-        ));
+        child: DrawerMenu(changeScreen));
   }
 
   changeScreen(int index) {
@@ -215,46 +152,23 @@ class _ScreenState extends State<DefaultScreen>
   }
 
   getDefaultScreen() {
-    switch (selectedPageScreen) {
-      case 0:
-        return WillPopScope(
-            onWillPop: _willPopCallback,
-            child: GestureDetector(
-                onHorizontalDragStart: _onDragStart,
-                onHorizontalDragUpdate: _onDragUpdate,
-                onHorizontalDragEnd: _onDragEnd,
-                behavior: HitTestBehavior.translucent,
-                child: SafeArea(
-                    child: Scaffold(
-                        body: getScreen(),
-                        bottomNavigationBar: CircleBottomNavigation(
-                            key: GlobalKey(),
-                            initialSelection: selectedNavIndex,
-                            barBackgroundColor: Colors.grey[900],
-                            tabs: [
-                              TabData(
-                                  icon: Icons.home,
-                                  iconSize: 25,
-                                  title: bottomNavBars[0]),
-                              TabData(
-                                  icon: Icons.history,
-                                  iconSize: 25,
-                                  title: bottomNavBars[1]),
-                              TabData(
-                                  icon: Icons.notifications,
-                                  iconSize: 25,
-                                  title: bottomNavBars[2])
-                            ],
-                            onTabChangedListener: (index) {
-                              setState(() {
-                                selectedNavIndex = index;
-                              });
-                            })))));
-      case 1:
-        return SafeArea(child: UnusedAppsScreen(changeScreen));
-      case 2:
-        return SafeArea(child: ReportScreen(changeScreen));
-    }
+    // switch (selectedPageScreen) {
+    //   case 0:
+    return WillPopScope(
+        onWillPop: _willPopCallback,
+        child: GestureDetector(
+            onHorizontalDragStart: _onDragStart,
+            onHorizontalDragUpdate: _onDragUpdate,
+            onHorizontalDragEnd: _onDragEnd,
+            behavior: HitTestBehavior.translucent,
+            child: SafeArea(
+                child: Scaffold(
+              body: getScreen(),
+            ))));
+    // case 1:
+    //   return SafeArea(child: UnusedAppsScreen(changeScreen));
+    // case 2:
+    //   return SafeArea(child: ReportScreen(changeScreen));
   }
 
   @override
@@ -262,7 +176,7 @@ class _ScreenState extends State<DefaultScreen>
     super.initState();
     animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 260),
+      duration: Duration(milliseconds: 500),
     );
   }
 
@@ -315,10 +229,12 @@ class _ScreenState extends State<DefaultScreen>
   }
 
   getMainScreen() {
+    var child = getDefaultScreen();
     return AnimatedBuilder(
         animation: animationController,
-        builder: (context, _) {
-          return getStackedWidget();
+        child: child,
+        builder: (context, child) {
+          return getStackedWidget(child);
         });
   }
 

@@ -10,6 +10,5 @@ class BootStrapper {
     locator.registerLazySingleton(() => LocalStorageService());
     locator.registerLazySingleton(() => InstalledAppsService());
     locator.registerLazySingleton(() => DataUsageService());
-    
   }
 }

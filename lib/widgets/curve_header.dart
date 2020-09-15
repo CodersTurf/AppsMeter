@@ -3,39 +3,22 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class CustomHeader extends StatelessWidget {
-  double height;
   String headerText;
-  Widget leading;
-  CustomHeader(this.height,this.headerText,[this.leading]);
+
+  Widget child;
+  CustomHeader(this.headerText, [this.child]);
   @override
   Widget build(BuildContext context) {
     return ClipPath(
         clipper: CurvedBottomClipper(),
         child: Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-              colors: [Colors.grey[900], Colors.pink[800]],
-            )),
-            height: height,
-            child: Center(
-                child: Padding(
-                    padding: EdgeInsets.only(bottom: 90),
-                    child: Row(children: <Widget>[
-                      SizedBox(
-                        width: 10,
-                      ),
-                      leading,
-                      Expanded(
-                          child: Center(
-                        child: Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 50, 0),
-                            child: Text(headerText,
-                                style: TextStyle(
-                                  fontSize: 19,
-                                  color: Colors.white,
-                                ))),
-                      ))
-                    ])))));
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Colors.purple[500], Colors.purple[900]],
+                  begin: Alignment.bottomRight,
+                  end: Alignment.topLeft)),
+          child: child,
+        ));
   }
 }
 
@@ -43,13 +26,13 @@ class CurvedBottomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-    path.lineTo(0, size.height);
-    var initStartPoint = Offset(size.width * 0.25, size.height - 50);
-    var initEndPoint = Offset(size.width * 0.5, size.height - 35);
+    path.lineTo(0, size.height - 60);
+    var initStartPoint = Offset(size.width * 0.25, size.height);
+    var initEndPoint = Offset(size.width * 0.5, size.height);
     path.quadraticBezierTo(
         initStartPoint.dx, initStartPoint.dy, initEndPoint.dx, initEndPoint.dy);
-    var secondEndPoint = Offset(size.width, size.height - 80);
-    var secondStartPoint = Offset(size.width * 0.75, size.height - 10);
+    var secondEndPoint = Offset(size.width, size.height - 60);
+    var secondStartPoint = Offset(size.width * 0.75, size.height);
     path.quadraticBezierTo(secondStartPoint.dx, secondStartPoint.dy,
         secondEndPoint.dx, secondEndPoint.dy);
 

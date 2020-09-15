@@ -1,9 +1,8 @@
 import 'dart:async';
 
+import 'package:app_uninstaller/app_uninstaller.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:AppsMeter/datalayer/models/appdetails_model.dart';
-import 'package:intent/intent.dart' as android_intent;
-import 'package:intent/action.dart' as android_action;
 
 class InstalledAppsService {
   List<AppDetailsModel> apps = new List<AppDetailsModel>();
@@ -34,7 +33,8 @@ class InstalledAppsService {
           includeAppIcons: true);
       for (var index = 0; index < allApps.length; index++) {
         ApplicationWithIcon app = allApps[index];
-        installedAppspps.add(AppDetailsModel(app.appName, app.icon, app.packageName));
+        installedAppspps
+            .add(AppDetailsModel(app.appName, app.icon, app.packageName));
       }
     } else {
       installedAppspps = await Future.delayed(Duration(seconds: 0), () {
@@ -47,10 +47,7 @@ class InstalledAppsService {
   Future<AppDetailsModel> getAppDetails(String package,
       [bool onlyInstalledApp = false]) async {
     AppDetailsModel app;
-    if(package=="com.application.zomato")
-    {
-      var i=1;
-    }
+
     if (onlyInstalledApp) {
       bool isAppInstalled = await DeviceApps.isAppInstalled(package);
       if (!isAppInstalled) {
@@ -69,19 +66,11 @@ class InstalledAppsService {
   }
 
   Future<dynamic> unInstallApp(String appPackage) async {
-    var completer = new Completer();
     try {
-    android_intent.Intent()
-        ..setAction(android_action.Action.ACTION_DELETE)
-        ..setData(Uri.parse("package:$appPackage"))
-        ..startActivity().then((data) {
-         completer.complete(true);
-        }, onError: (e) {
-           completer.complete(false);
-        });
+      var result = await AppUninstaller.Uninstall(appPackage);
+      return result;
     } catch (err) {
       throw err;
     }
-    return completer.future;
   }
 }

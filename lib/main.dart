@@ -14,7 +14,9 @@ import 'package:AppsMeter/services/navigation_service.dart';
 import 'package:AppsMeter/utilities/servicelocator.dart';
 import 'package:usage_stats/usage_stats.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   BootStrapper.initializeDIs();
   runApp(MyApp());
 }
@@ -27,38 +29,36 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   int appUsagePerm = 0;
   var storageService = locator<LocalStorageService>();
-  showTestMessage(String message)
-  {
-      scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 3),
-      ));
+  showTestMessage(String message) {
+    scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 3),
+    ));
   }
+
   Future<void> checkForUpdate() async {
     var isLocalUpdateExist = await storageService.getBoolValue('InAppUpdate');
     if (isLocalUpdateExist == true) {
-      showTestMessage( 'Update exist and performing update');
+      showTestMessage('Update exist and performing update');
       performUpdate();
     } else {
-      InAppUpdate.checkForUpdate().then((info) {        
+      InAppUpdate.checkForUpdate().then((info) {
         if (info?.updateAvailable == true) {
-           showTestMessage('Update available and downloading');
-           downloadUpdate();
-        }
-        else
-        {
+          showTestMessage('Update available and downloading');
+          downloadUpdate();
+        } else {
           showTestMessage('Update not found');
         }
       }).catchError((e) => showError);
     }
   }
 
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-       LocalNotificationManager().cancelAllNotifications();
-      checkAppPerm();
-    }
-  }
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.resumed) {
+  //     LocalNotificationManager().cancelAllNotifications();
+  //     checkAppPerm();
+  //   }
+  // }
 
   showAppUsagePermWarning() {}
   checkAppPerm() async {
@@ -70,9 +70,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         await askPermission();
       }
     }
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   askPermission() async {
@@ -81,29 +79,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   downloadUpdate() {
-     showTestMessage( 'performing flexible update download');
+    showTestMessage('performing flexible update download');
     InAppUpdate.startFlexibleUpdate().then((value) {
-       showTestMessage('flexible update downloaded');
+      showTestMessage('flexible update downloaded');
       storageService.saveKeyPairBoolValue('InAppUpdate', true);
-     // performUpdate();
+      // performUpdate();
     }).catchError((e) => showError);
   }
 
   performUpdate() {
-     showTestMessage( 'Completing flexible update');
-    InAppUpdate.completeFlexibleUpdate()
-        .then((value){
-            storageService.deleteKey('InAppUpdate');
-            showTestMessage( 'Deleted InAppUpdate');
-        })
-        .catchError((e) => showError);
+    showTestMessage('Completing flexible update');
+    InAppUpdate.completeFlexibleUpdate().then((value) {
+      storageService.deleteKey('InAppUpdate');
+      showTestMessage('Deleted InAppUpdate');
+    }).catchError((e) => showError);
   }
 
   showError(ex) {
-   scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text(ex.error),
-        duration: Duration(seconds: 3),
-      ));
+    scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(ex.error),
+      duration: Duration(seconds: 3),
+    ));
   }
 
   Widget getScreen() {
@@ -119,37 +115,40 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    PushNotificationsManager pushManager=new PushNotificationsManager();
-    LocalNotificationManager localManager=new LocalNotificationManager();
+    PushNotificationsManager pushManager = new PushNotificationsManager();
+    LocalNotificationManager localManager = new LocalNotificationManager();
     localManager.createNotificationChannel();
     pushManager.init();
     checkAppPerm();
     WidgetsBinding.instance.addObserver(this);
     SchedulerBinding.instance.addPostFrameCallback((_) {
       localManager.cancelAllNotifications();
-      if (Config.appMode != 'debug') {         
+      if (Config.appMode != 'debug') {
         checkForUpdate();
       }
     });
   }
-  var scaffoldKey=new GlobalKey<ScaffoldState>();
+
+  var scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    //FlutterStatusbarcolor.setStatusBarColor(Colors.white);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'AppsMeter',
       navigatorKey: locator<NavigationService>().navigatorKey,
       theme: ThemeData(
-        brightness: Brightness.dark,
+        textTheme: TextTheme(
+          bodyText2: TextStyle(
+              color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),
+        ),
+        // brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.white70,
 
-        accentColor: Colors.white,
         dividerColor: Colors.black12,
-        accentIconTheme: IconThemeData(color: Colors.black),
-        // primarySwatch: Colors.purple,
+        //accentIconTheme: IconThemeData(color: Colors.black),
       ),
-      home: new Scaffold(
-        key:scaffoldKey,
-        body: getScreen()),
+      home: new Scaffold(key: scaffoldKey, body: getScreen()),
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }

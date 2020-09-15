@@ -1,8 +1,56 @@
 import 'package:AppsMeter/datalayer/models/appusage_model.dart';
 import 'package:AppsMeter/services/installed_apps.dart';
+import 'package:flutter/foundation.dart';
 import 'package:usage_stats/usage_stats.dart';
 import 'package:AppsMeter/utilities/servicelocator.dart';
-//import 'package:app_usage/app_usage.dart';
+
+getAppIntervals(Map<String, dynamic> inputs) {
+  var events = inputs['events'];
+  var appPackage = inputs['package'];
+  var eventStats = events;
+  if (appPackage.length > 0) {
+    eventStats = events.where((obj) {
+      return obj.packageName == appPackage;
+    }).toList();
+  }
+  var apps = eventStats
+      .map((obj) {
+        return obj.packageName;
+      })
+      .toSet()
+      .toList();
+  Map<String, List<List<int>>> appIntervals =
+      new Map<String, List<List<int>>>();
+  apps.forEach((app) {
+    appIntervals[app] = List<List<int>>();
+  });
+  eventStats.forEach((event) {
+    //if it is device shut down..
+    if (event.eventType == '26') {
+      appIntervals.forEach((key, value) {
+        value.forEach((val) {
+          if (val.length == 1) {
+            //add the sutdown time..
+            val.add(int.parse(event.timeStamp));
+          }
+        });
+      });
+    }
+    var appInterval = appIntervals[event.packageName];
+    if (event.eventType == '1') {
+      appInterval.add(List<int>());
+      appInterval[appInterval.length - 1].add(int.parse(event.timeStamp));
+    }
+    if (event.eventType == '2') {
+      if (appInterval.length > 0 &&
+          appInterval[appInterval.length - 1].length == 1) {
+        //if only it has start time..
+        appInterval[appInterval.length - 1].add(int.parse(event.timeStamp));
+      }
+    }
+  });
+  return appIntervals;
+}
 
 class DataUsageService {
   String usageData;
@@ -35,15 +83,14 @@ class DataUsageService {
         var key = keys[index];
         var app = usageInfo[key];
         if (app.totalTimeInForeground == '0') {
-         
-          var packageDetails = await installedAppsService.getAppDetails(
-             key, true);
+          var packageDetails =
+              await installedAppsService.getAppDetails(key, true);
           if (packageDetails != null) {
             var appD = AppUsageModel(packageDetails.appName, 0,
                 packageDetails.decodedImage, packageDetails.appPackage);
             apps.add(appD);
           }
-       }
+        }
       }
     } catch (err) {
       throw err;
@@ -60,50 +107,10 @@ class DataUsageService {
       List<AppUsageModel> appModels = new List<AppUsageModel>();
       // return appModels;
       var events = await UsageStats.queryEvents(startDate, endDate);
-
-      var eventStats = events;
-      if (appPackage.length > 0) {
-        eventStats = events.where((obj) {
-          return obj.packageName == appPackage;
-        }).toList();
-      }
-      var apps = eventStats
-          .map((obj) {
-            return obj.packageName;
-          })
-          .toSet()
-          .toList();
-      Map<String, List<List<int>>> appIntervals =
-          new Map<String, List<List<int>>>();
-      apps.forEach((app) {
-        appIntervals[app] = List<List<int>>();
-      });
-      eventStats.forEach((event) {
-        //if it is device shut down..
-        if (event.eventType == '26') {
-          appIntervals.forEach((key, value) {
-            value.forEach((val) {
-              if (val.length == 1) {
-                //add the sutdown time..
-                val.add(int.parse(event.timeStamp));
-              }
-            });
-          });
-        }
-        var appInterval = appIntervals[event.packageName];
-        if (event.eventType == '1') {
-          appInterval.add(List<int>());
-          appInterval[appInterval.length - 1].add(int.parse(event.timeStamp));
-        }
-        if (event.eventType == '2') {
-          if (appInterval.length > 0 &&
-              appInterval[appInterval.length - 1].length == 1) {
-            //if only it has start time..
-            appInterval[appInterval.length - 1].add(int.parse(event.timeStamp));
-          }
-        }
-      });
-
+      Map<String, dynamic> inputs = new Map();
+      inputs['events'] = events;
+      inputs['package'] = appPackage;
+      var appIntervals = await compute(getAppIntervals, inputs);
       for (var index = 0; index < appIntervals.keys.length; index++) {
         var key = appIntervals.keys.toList()[index];
         var val = appIntervals[key];

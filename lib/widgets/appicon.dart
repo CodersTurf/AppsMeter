@@ -1,4 +1,3 @@
-
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -10,7 +9,6 @@ class AppIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      
         padding: EdgeInsets.all(8),
         //margin: EdgeInsets.all(3),
         child: Image.memory(
@@ -24,7 +22,7 @@ class AppIcon extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(
-                color: Colors.blue,
+                // color: Colors.blue,
                 blurRadius: 2.0,
                 spreadRadius: 2.0,
                 offset: Offset(
